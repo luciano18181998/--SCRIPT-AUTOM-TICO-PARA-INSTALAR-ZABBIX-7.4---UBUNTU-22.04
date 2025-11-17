@@ -1,140 +1,40 @@
-#!/bin/bash
-set -e
+clear
+echo -e "\e[1;32m=============================================="
+echo -e "        INSTALADOR ZABBIX 7.4 – MENU"
+echo -e "==============================================\e[0m"
 
-### ============================================
-### Função: Detectar IP público automaticamente
-### ============================================
-get_ip() {
-    SERVER_IP=$(curl -s ifconfig.me)
-}
+echo -e "\e[1;33m1 - Instalar Zabbix usando IP da VPS"
+echo "2 - Instalar Zabbix com SSL (Certbot)"
+echo "3 - Instalar Zabbix com Túnel Cloudflare"
+echo "4 - Reiniciar serviços do Zabbix"
+echo -e "0 - Sair\e[0m"
 
+echo -e "\e[1;32m==============================================\e[0m"
+read -p "Digite a opção desejada: " opcao
 
-### ============================================
-### Função 1: Instalação usando IP da VPS
-### ============================================
-install_ip() {
-    clear
-    echo "====================================="
-    echo " INSTALAÇÃO ZABBIX 7.4 (USANDO IP)"
-    echo "====================================="
-
-    ZBX_DB_PASS="senha123"
-    get_ip
-
-    apt update -y
-    apt upgrade -y
-
-    wget https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.4+ubuntu22.04_all.deb
-    dpkg -i zabbix-release_latest_7.4+ubuntu22.04_all.deb
-    apt update -y
-
-    apt install -y zabbix-server-mysql zabbix-nginx-conf zabbix-sql-scripts zabbix-agent mysql-server php8.1-fpm
-
-    mysql -uroot <<EOF
-CREATE DATABASE zabbix CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-CREATE USER 'zabbix'@'localhost' IDENTIFIED BY '$ZBX_DB_PASS';
-GRANT ALL PRIVILEGES ON zabbix.* TO 'zabbix'@'localhost';
-FLUSH PRIVILEGES;
-EOF
-
-    zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql -uzabbix -p"$ZBX_DB_PASS" zabbix
-
-    cat <<EOF > /etc/zabbix/nginx.conf
-server {
-    listen 80;
-    server_name $SERVER_IP;
-
-    root /usr/share/zabbix/ui;
-    index index.php;
-
-    location / {
-        try_files \$uri \$uri/ /index.php;
-    }
-
-    location ~ [^/]\.php(/|$) {
-        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-    }
-}
-EOF
-
-    systemctl restart nginx zabbix-server zabbix-agent php8.1-fpm
-    systemctl enable nginx zabbix-server zabbix-agent php8.1-fpm
-
-    echo ""
-    echo "====================================="
-    echo " ZABBIX INSTALADO COM SUCESSO!"
-    echo " Acesse: http://$SERVER_IP"
-    echo "====================================="
-}
-
-
-
-### ============================================
-### Função 2: Instalação com domínio + SSL Certbot
-### ============================================
-install_ssl() {
-    clear
-    echo "============================================="
-    echo " INSTALAÇÃO ZABBIX 7.4 COM SSL AUTOMÁTICO"
-    echo "============================================="
-
-    read -p "Digite o domínio para instalar o Zabbix: " ZBX_DOMAIN
-    read -p "Digite a senha do banco Zabbix: " ZBX_DB_PASS
-
-    apt update -y
-    apt upgrade -y
-
-    wget https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.4+ubuntu22.04_all.deb
-    dpkg -i zabbix-release_latest_7.4+ubuntu22.04_all.deb
-    apt update -y
-
-    apt install -y zabbix-server-mysql zabbix-nginx-conf zabbix-sql-scripts zabbix-agent mysql-server php8.1-fpm python3-certbot-nginx
-
-    mysql -uroot <<EOF
-CREATE DATABASE zabbix CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-CREATE USER 'zabbix'@'localhost' IDENTIFIED BY '$ZBX_DB_PASS';
-GRANT ALL PRIVILEGES ON zabbix.* TO 'zabbix'@'localhost';
-FLUSH PRIVILEGES;
-EOF
-
-    zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql -uzabbix -p"$ZBX_DB_PASS" zabbix
-
-    cat <<EOF > /etc/zabbix/nginx.conf
-server {
-    listen 80;
-    server_name $ZBX_DOMAIN;
-
-    root /usr/share/zabbix/ui;
-    index index.php;
-
-    location / {
-        try_files \$uri \$uri/ /index.php;
-    }
-
-    location ~ [^/]\.php(/|$) {
-        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-    }
-}
-EOF
-
-    systemctl restart nginx
-
-    certbot --nginx -d $ZBX_DOMAIN --non-interactive --agree-tos -m admin@$ZBX_DOMAIN
-
-    systemctl restart zabbix-server zabbix-agent nginx php8.1-fpm
-    systemctl enable zabbix-server zabbix-agent nginx php8.1-fpm
-
-    echo ""
-    echo "====================================="
-    echo " INSTALAÇÃO COM SSL FINALIZADA!"
-    echo " Acesse: https://$ZBX_DOMAIN"
-    echo "====================================="
-}
-
-
-
-### ==============================
+case $opcao in
+  1)
+    bash install-zabbix-ip.sh
+    ;;
+  2)
+    bash install-zabbix-ssl-certbot.sh
+    ;;
+  3)
+    bash install-zabbix-cloudflare-tunnel.sh
+    ;;
+  4)
+    echo -e "\n🔄 Reiniciando serviços..."
+    systemctl restart zabbix-server zabbix-agent php8.1-fpm nginx
+    systemctl enable zabbix-server zabbix-agent
+    echo -e "✔ Serviços reiniciados!\n"
+    read -p "Pressione Enter para voltar ao menu..."
+    ;;
+  0)
+    echo -e "\n👋 Saindo..."
+    exit 0
+    ;;
+  *)
+    echo -e "\n❌ Opção inválida!"
+    sleep 2
+    ;;
+esac
