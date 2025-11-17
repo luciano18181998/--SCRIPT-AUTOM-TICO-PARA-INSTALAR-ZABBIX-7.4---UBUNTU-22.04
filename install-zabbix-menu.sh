@@ -1,3 +1,5 @@
+#!/bin/bash
+
 clear
 echo -e "\e[1;32m=============================================="
 echo -e "        INSTALADOR ZABBIX 7.4 – MENU"
@@ -22,7 +24,7 @@ case $opcao in
     bash <(curl -fsSL https://raw.githubusercontent.com/luciano18181998/--SCRIPT-AUTOM-TICO-PARA-INSTALAR-ZABBIX-7.4---UBUNTU-22.04/main/install-zabbix-ssl-certbot.sh)
     ;;
   3)
-    echo -e "\n🌐 Baixando instalador com Cloudflare Tunnel..."
+    echo -e "\n🌐 Baixando instalador Cloudflare Tunnel..."
     bash <(curl -fsSL https://raw.githubusercontent.com/luciano18181998/--SCRIPT-AUTOM-TICO-PARA-INSTALAR-ZABBIX-7.4---UBUNTU-22.04/main/install-zabbix-cloudflare-tunnel.sh)
     ;;
   4)
