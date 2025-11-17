@@ -10,6 +10,9 @@ Este repositório contém **scripts totalmente automáticos** para instalar e co
 ✔ Instalação via **IP da VPS**  
 ✔ Instalação via **domínio com SSL Certbot**  
 ✔ Instalação via **Cloudflare Tunnel**  
+✔ Login padrão
+**Usuário: Admin"**
+**Senha: zabbix"**
 ✔ Menu interativo com cores ANSI (igual instaladores profissionais)
 
 ---
