@@ -17,15 +17,18 @@ read -p "Digite a opção desejada: " opcao
 case $opcao in
   1)
     echo -e "\n🔧 Baixando instalador via IP..."
-    bash <(curl -fsSL https://raw.githubusercontent.com/luciano18181998/--SCRIPT-AUTOM-TICO-PARA-INSTALAR-ZABBIX-7.4---UBUNTU-22.04/main/install-zabbix-ip.sh)
+    bash <(curl -fsSL \
+https://raw.githubusercontent.com/luciano18181998/--SCRIPT-AUTOM-TICO-PARA-INSTALAR-ZABBIX-7.4---UBUNTU-22.04/main/install-zabbix-ip.sh)
     ;;
   2)
-    echo -e "\n🔐 Baixando instalador com SSL..."
-    bash <(curl -fsSL https://raw.githubusercontent.com/luciano18181998/--SCRIPT-AUTOM-TICO-PARA-INSTALAR-ZABBIX-7.4---UBUNTU-22.04/main/install-zabbix-ssl-certbot.sh)
+    echo -e "\n🔐 Baixando instalador com SSL (Certbot)..."
+    bash <(curl -fsSL \
+https://raw.githubusercontent.com/luciano18181998/--SCRIPT-AUTOM-TICO-PARA-INSTALAR-ZABBIX-7.4---UBUNTU-22.04/main/install-zabbix-ssl-certbot.sh)
     ;;
   3)
-    echo -e "\n🌐 Baixando instalador Cloudflare Tunnel..."
-    bash <(curl -fsSL https://raw.githubusercontent.com/luciano18181998/--SCRIPT-AUTOM-TICO-PARA-INSTALAR-ZABBIX-7.4---UBUNTU-22.04/main/install-zabbix-cloudflare-tunnel.sh)
+    echo -e "\n🌐 Baixando instalador com Cloudflare Tunnel..."
+    bash <(curl -fsSL \
+https://raw.githubusercontent.com/luciano18181998/--SCRIPT-AUTOM-TICO-PARA-INSTALAR-ZABBIX-7.4---UBUNTU-22.04/main/install-zabbix-cloudflare-tunnel.sh)
     ;;
   4)
     echo -e "\n🔄 Reiniciando serviços..."
