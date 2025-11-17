@@ -12,6 +12,7 @@ Este repositório contém **scripts totalmente automáticos** para instalar e co
 ✔ Instalação via **Cloudflare Tunnel**  
 Login Painel login **Usuário: Admin"**
 Login Painel senha **Senha: zabbix"**
+
 ✔ Menu interativo com cores ANSI (igual instaladores profissionais)
 
 ---
